@@ -1,23 +1,41 @@
 package com.teadevs.bugnet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+
 import java.util.Date;
 import java.util.List;
 
+@Document(collection = "bugs")
 public class Bug {
 
+    @Id
+    @Field(value = "id", targetType = FieldType.INT64)
     private long id;
 
+    @Field(value = "summary", targetType = FieldType.STRING)
     private String summary;
 
+    /*
+    1st item is description.
+     */
+    @Transient
     private List<BugComment> bugComments;
 
+    @Field(value = "fileLocation", targetType = FieldType.STRING)
+    private String bugFileLocation;
+    @Field(value = "assignedTo", targetType = FieldType.STRING)
     private String assignedTo;
 
     private Date eta;
 
     private BugStatus bugStatus;
 
-    private boolean regression;
+    private RegressionStatus regression;
 
     private BugSeverity severity;
 
@@ -45,6 +63,14 @@ public class Bug {
         this.bugComments = bugComments;
     }
 
+    public String getBugFileLocation() {
+        return bugFileLocation;
+    }
+
+    public void setBugFileLocation(String bugFileLocation) {
+        this.bugFileLocation = bugFileLocation;
+    }
+
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -69,11 +95,11 @@ public class Bug {
         this.bugStatus = bugStatus;
     }
 
-    public boolean isRegression() {
+    public RegressionStatus getRegression() {
         return regression;
     }
 
-    public void setRegression(boolean regression) {
+    public void setRegression(RegressionStatus regression) {
         this.regression = regression;
     }
 
@@ -85,5 +111,17 @@ public class Bug {
         this.severity = severity;
     }
 
-    
+    @Override
+    public String toString() {
+        return "Bug{" +
+                "id=" + id +
+                ", summary='" + summary + '\'' +
+                ", bugComments=" + bugComments +
+                ", assignedTo='" + assignedTo + '\'' +
+                ", eta=" + eta +
+                ", bugStatus=" + bugStatus +
+                ", regression=" + regression +
+                ", severity=" + severity +
+                '}';
+    }
 }

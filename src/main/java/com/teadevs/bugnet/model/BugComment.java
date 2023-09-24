@@ -1,15 +1,20 @@
 package com.teadevs.bugnet.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Date;
 
 public class BugComment {
 
+    @JsonProperty
     private String bugId;
 
     private Date commentDate;
 
+    @JsonProperty
     private String commenter;
 
+    @JsonProperty
     private String comment;
 
     /*
