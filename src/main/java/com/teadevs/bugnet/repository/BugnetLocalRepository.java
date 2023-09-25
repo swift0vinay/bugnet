@@ -1,7 +1,6 @@
 package com.teadevs.bugnet.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.teadevs.bugnet.model.Bug;
+import com.teadevs.bugnet.model.bug.Bug;
 import org.springframework.stereotype.Repository;
 
 import java.io.IOException;

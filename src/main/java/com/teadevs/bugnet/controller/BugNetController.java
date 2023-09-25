@@ -1,12 +1,9 @@
 package com.teadevs.bugnet.controller;
 
-import com.teadevs.bugnet.model.Bug;
+import com.teadevs.bugnet.model.bug.Bug;
 import com.teadevs.bugnet.service.BugnetService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +23,28 @@ public class BugNetController {
         }
     }
 
+
+    @GetMapping("/api/v1/bug/all")
+    public List<Bug> getAllBugs() {
+        try {
+            return bugNetService.getAllBugs();
+        } catch (Exception e) {
+            System.out.println("Failed to get bug");
+            throw new RuntimeException("Failed to get bug");
+        }
+    }
+
+    @GetMapping("/api/v1/bug/user/{id}")
+    public List<Bug> getBugsByUserId(@PathVariable String id) {
+        try {
+            return bugNetService.getBugsByUserId(id);
+        } catch (Exception e) {
+            System.out.println("Failed to get bug");
+            throw new RuntimeException("Failed to get bug");
+        }
+    }
+
+
     @PostMapping("/api/v1/bug/update")
     public void updateBug(@RequestBody Bug bug) {
         try {
@@ -36,14 +55,4 @@ public class BugNetController {
         }
     }
 
-
-    @GetMapping("/api/v1/bug/all")
-    public List<Bug> getBugs() {
-        try {
-            return bugNetService.getBugs();
-        } catch (Exception e) {
-            System.out.println("Failed to get bug");
-            throw new RuntimeException("Failed to get bug");
-        }
-    }
 }

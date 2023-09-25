@@ -1,10 +1,15 @@
 package com.teadevs.bugnet.service;
 
-import com.teadevs.bugnet.model.Bug;
+import com.teadevs.bugnet.model.bug.Bug;
+
+import java.util.List;
+import java.util.Map;
 
 public interface BugdataGenerator {
 
-    long generateId() ;
+    public void generateId(Bug bug);
 
-    String generateFileLocation(Bug bug);
+    public void generateFileLocation(Bug bug);
+    
+    public Map<String, List<String>> generateBugDiff(Bug original, Bug request);
 }
