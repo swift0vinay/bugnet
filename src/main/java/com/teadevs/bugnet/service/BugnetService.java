@@ -9,15 +9,14 @@ public interface BugnetService {
     
     public void createBug(Bug bug);
     
-    
     public List<BugUpdate> getComments(String fileLocation);
     
     public List<Bug> getAllBugs();
     
     public Bug getBugById(long id);
-
+    
     public List<Bug> getBugsByUserId(String id);
     
     public void updateBug(Bug bug);
-
+    
 }

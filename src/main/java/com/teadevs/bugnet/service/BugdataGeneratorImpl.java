@@ -1,6 +1,7 @@
 package com.teadevs.bugnet.service;
 
 
+import com.teadevs.bugnet.exceptions.DatabaseException;
 import com.teadevs.bugnet.model.bug.Bug;
 import com.teadevs.bugnet.model.bug.BugFields;
 import com.teadevs.bugnet.repository.BugnetRepository;
@@ -51,6 +52,7 @@ public class BugdataGeneratorImpl implements BugdataGenerator {
             bug.setBugFileLocation(filePath);
         } catch (Exception e) {
             logger.warn("Failed to create file: {} {0}", filePath, e);
+            throw new DatabaseException("Failed to create file: " + filePath);
         }
     }
     

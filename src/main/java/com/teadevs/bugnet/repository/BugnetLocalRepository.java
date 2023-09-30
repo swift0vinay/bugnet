@@ -8,5 +8,5 @@ import java.io.IOException;
 @Repository
 public interface BugnetLocalRepository {
 
-    public void saveComments(Bug bug) throws IOException;
+    public void saveComments(Bug bug);
 }

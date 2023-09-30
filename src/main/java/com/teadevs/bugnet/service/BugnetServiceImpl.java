@@ -1,5 +1,7 @@
 package com.teadevs.bugnet.service;
 
+import com.teadevs.bugnet.exceptions.BugnetException;
+import com.teadevs.bugnet.exceptions.DatabaseException;
 import com.teadevs.bugnet.model.bug.*;
 import com.teadevs.bugnet.repository.BugnetLocalRepository;
 import com.teadevs.bugnet.repository.BugnetRepository;
@@ -32,29 +34,24 @@ public class BugnetServiceImpl implements BugnetService {
     
     @Override
     public void createBug(Bug bug) {
-        try {
-            bugdataGenerator.generateId(bug);
-            bugdataGenerator.generateFileLocation(bug);
-            bug.setBugStatus(BugStatus.NEW);
-            bug.validate();
-            if (bug.getRegression() == null) {
-                bug.setRegression(RegressionStatus.UNKNOWN);
-            }
-            
-            if (bug.getSeverity() == null) {
-                bug.setSeverity(BugSeverity.UNKNOWN);
-            }
+        bugdataGenerator.generateId(bug);
+        bugdataGenerator.generateFileLocation(bug);
+        bug.setBugStatus(BugStatus.NEW);
+        bug.validate();
+        if (bug.getRegression() == null) {
+            bug.setRegression(RegressionStatus.UNKNOWN);
+        }
+        
+        if (bug.getSeverity() == null) {
+            bug.setSeverity(BugSeverity.UNKNOWN);
+        }
             /*
             1. Bug details are stored in db.
             2. Bug comments are stored in files.
              */
-            bugnetLocalRepository.saveComments(bug);
-            bugnetRepository.save(bug);
-            logger.info("Successfully create bug {}", bug.getId());
-        } catch (Exception e) {
-            logger.warn("Failed to create bug {0}", e);
-//            throw new DatabaseException(e);
-        }
+        bugnetLocalRepository.saveComments(bug);
+        bugnetRepository.save(bug);
+        logger.info("Successfully create bug {}", bug.getId());
     }
     
     @Override
@@ -70,9 +67,9 @@ public class BugnetServiceImpl implements BugnetService {
                 throw new FileNotFoundException("Cannot find file");
             }
             return new ArrayList<>(Arrays.asList(jsonUtils.readJson(filePath, BugUpdate[].class)));
-        } catch (Exception e) {
+        } catch (FileNotFoundException e) {
+            throw new DatabaseException("Cannot find file: " + filePath);
         }
-        return new ArrayList<>();
     }
     
     @Override
@@ -109,28 +106,28 @@ public class BugnetServiceImpl implements BugnetService {
         Check for differences.
         Keep track of those diffs
          */
-        try {
-            Bug original = getBugById(bug.getId());
-            if (original == null) {
-                logger.warn("Bug {} not found", bug.getId());
-                throw new RuntimeException("Bug not found with id: " + bug.getId());
-            }
-            bug.setBugFileLocation(original.getBugFileLocation());
-            BugUpdate bugUpdate = new BugUpdate();
-            if (!bug.getBugUpdates().isEmpty()) {
-                BugUpdate req = bug.getBugUpdates().get(0);
-                bugUpdate.setCommenter(req.getCommenter());
-                bugUpdate.setCommentDate(req.getCommentDate());
-                bugUpdate.setComment(req.getComment());
-            }
-            Map<String, List<String>> diff = bugdataGenerator.generateBugDiff(original, bug);
-            bugUpdate.setChanges(diff);
-            original.getBugUpdates().add(bugUpdate);
-            bugnetLocalRepository.saveComments(original);
-            bugnetRepository.save(original);
-        } catch (Exception e) {
-            logger.warn("{0}", e);
+        Bug original = getBugById(bug.getId());
+        if (original == null) {
+            logger.warn("Bug {} not found", bug.getId());
+            throw new BugnetException("Bug not found with id: " + bug.getId());
         }
+        bug.setBugFileLocation(original.getBugFileLocation());
+        
+        BugUpdate bugUpdate = new BugUpdate();
+        if (!bug.getBugUpdates().isEmpty()) {
+            BugUpdate req = bug.getBugUpdates().get(0);
+            bugUpdate.setCommenter(req.getCommenter());
+            bugUpdate.setCommentDate(req.getCommentDate());
+            bugUpdate.setComment(req.getComment());
+        }
+        Map<String, List<String>> diff = bugdataGenerator.generateBugDiff(original, bug);
+        
+        bugUpdate.setChanges(diff);
+        original.getBugUpdates().add(bugUpdate);
+        
+        bugnetLocalRepository.saveComments(original);
+        bugnetRepository.save(original);
+        
     }
     
 }

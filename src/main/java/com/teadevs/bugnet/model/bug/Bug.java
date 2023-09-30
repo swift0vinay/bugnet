@@ -1,5 +1,6 @@
 package com.teadevs.bugnet.model.bug;
 
+import com.teadevs.bugnet.exceptions.BugnetException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -113,16 +114,16 @@ public class Bug {
     
     public void validate() {
         if (this.id == 0) {
-            throw new RuntimeException("Invalid bug id");
+            throw new BugnetException("Invalid bug id");
         }
         if (this.getSummary() == null || this.getSummary().isBlank()) {
-            throw new RuntimeException("Invalid summary");
+            throw new BugnetException("Invalid summary");
         }
         if (this.getAssignedTo() == null) {
-            throw new RuntimeException("Assignee is required");
+            throw new BugnetException("Assignee is required");
         }
         if (this.getBugFileLocation() == null || this.getBugFileLocation().isBlank()) {
-            throw new RuntimeException("Invalid file location");
+            throw new BugnetException("Invalid file location");
         }
     }
     
